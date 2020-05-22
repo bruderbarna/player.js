@@ -83,55 +83,7 @@ export function createEmbed({ html }, element) {
  */
 export function getOEmbedData(videoUrl, params = {}, element) {
     return new Promise((resolve, reject) => {
-        if (!isVimeoUrl(videoUrl)) {
-            throw new TypeError(`“${videoUrl}” is not a vimeo.com url.`);
-        }
-
-        let url = `https://vimeo.com/api/oembed.json?url=${encodeURIComponent(videoUrl)}`;
-
-        for (const param in params) {
-            if (params.hasOwnProperty(param)) {
-                url += `&${param}=${encodeURIComponent(params[param])}`;
-            }
-        }
-
-        const xhr = 'XDomainRequest' in window ? new XDomainRequest() : new XMLHttpRequest();
-        xhr.open('GET', url, true);
-
-        xhr.onload = function() {
-            if (xhr.status === 404) {
-                reject(new Error(`“${videoUrl}” was not found.`));
-                return;
-            }
-
-            if (xhr.status === 403) {
-                reject(new Error(`“${videoUrl}” is not embeddable.`));
-                return;
-            }
-
-            try {
-                const json = JSON.parse(xhr.responseText);
-                // Check api response for 403 on oembed
-                if (json.domain_status_code === 403) {
-                    // We still want to create the embed to give users visual feedback
-                    createEmbed(json, element);
-                    reject(new Error(`“${videoUrl}” is not embeddable.`));
-                    return;
-                }
-
-                resolve(json);
-            }
-            catch (error) {
-                reject(error);
-            }
-        };
-
-        xhr.onerror = function() {
-            const status = xhr.status ? ` (${xhr.status})` : '';
-            reject(new Error(`There was an error fetching the embed code from Vimeo${status}.`));
-        };
-
-        xhr.send();
+        reject(new Error(`There was an error fetching the embed code from Vimeo${status}.`));
     });
 }
 

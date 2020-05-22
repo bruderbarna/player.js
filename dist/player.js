@@ -1,9 +1,9 @@
-/*! @vimeo/player v2.10.0 | (c) 2019 Vimeo | MIT License | https://github.com/vimeo/player.js */
+/*! @vimeo/player v2.10.0 | (c) 2020 Vimeo | MIT License | https://github.com/vimeo/player.js */
 (function (global, factory) {
   typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
   typeof define === 'function' && define.amd ? define(factory) :
   (global = global || self, (global.Vimeo = global.Vimeo || {}, global.Vimeo.Player = factory()));
-}(this, function () { 'use strict';
+}(this, (function () { 'use strict';
 
   function _classCallCheck(instance, Constructor) {
     if (!(instance instanceof Constructor)) {
@@ -126,7 +126,7 @@
     throw new Error('Sorry, the Vimeo Player API is not available in this browser.');
   }
 
-  var commonjsGlobal = typeof window !== 'undefined' ? window : typeof global !== 'undefined' ? global : typeof self !== 'undefined' ? self : {};
+  var commonjsGlobal = typeof globalThis !== 'undefined' ? globalThis : typeof window !== 'undefined' ? window : typeof global !== 'undefined' ? global : typeof self !== 'undefined' ? self : {};
 
   function createCommonjsModule(fn, module) {
   	return module = { exports: {} }, fn(module, module.exports), module.exports;
@@ -273,7 +273,7 @@
     // special form of UMD for polyfilling across evironments
     context[name] = context[name] || definition();
 
-    if (module.exports) {
+    if ( module.exports) {
       module.exports = context[name];
     }
   })("Promise", typeof commonjsGlobal != "undefined" ? commonjsGlobal : commonjsGlobal, function DEF() {
@@ -779,57 +779,8 @@
    */
 
   function getOEmbedData(videoUrl) {
-    var params = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-    var element = arguments.length > 2 ? arguments[2] : undefined;
     return new Promise(function (resolve, reject) {
-      if (!isVimeoUrl(videoUrl)) {
-        throw new TypeError("\u201C".concat(videoUrl, "\u201D is not a vimeo.com url."));
-      }
-
-      var url = "https://vimeo.com/api/oembed.json?url=".concat(encodeURIComponent(videoUrl));
-
-      for (var param in params) {
-        if (params.hasOwnProperty(param)) {
-          url += "&".concat(param, "=").concat(encodeURIComponent(params[param]));
-        }
-      }
-
-      var xhr = 'XDomainRequest' in window ? new XDomainRequest() : new XMLHttpRequest();
-      xhr.open('GET', url, true);
-
-      xhr.onload = function () {
-        if (xhr.status === 404) {
-          reject(new Error("\u201C".concat(videoUrl, "\u201D was not found.")));
-          return;
-        }
-
-        if (xhr.status === 403) {
-          reject(new Error("\u201C".concat(videoUrl, "\u201D is not embeddable.")));
-          return;
-        }
-
-        try {
-          var json = JSON.parse(xhr.responseText); // Check api response for 403 on oembed
-
-          if (json.domain_status_code === 403) {
-            // We still want to create the embed to give users visual feedback
-            createEmbed(json, element);
-            reject(new Error("\u201C".concat(videoUrl, "\u201D is not embeddable.")));
-            return;
-          }
-
-          resolve(json);
-        } catch (error) {
-          reject(error);
-        }
-      };
-
-      xhr.onerror = function () {
-        var status = xhr.status ? " (".concat(xhr.status, ")") : '';
-        reject(new Error("There was an error fetching the embed code from Vimeo".concat(status, ".")));
-      };
-
-      xhr.send();
+      reject(new Error("There was an error fetching the embed code from Vimeo".concat(status, ".")));
     });
   }
   /**
@@ -1020,9 +971,7 @@
   var playerMap = new WeakMap();
   var readyMap = new WeakMap();
 
-  var Player =
-  /*#__PURE__*/
-  function () {
+  var Player = /*#__PURE__*/function () {
     /**
      * Create a Player.
      *
@@ -1122,7 +1071,7 @@
         if (_this.element.nodeName !== 'IFRAME') {
           var params = getOEmbedParameters(element, options);
           var url = getVimeoUrl(params);
-          getOEmbedData(url, params, element).then(function (data) {
+          getOEmbedData().then(function (data) {
             var iframe = createEmbed(data, element); // Overwrite element with the new iframe,
             // but store reference to the original element
 
@@ -2139,6 +2088,6 @@
 
   return Player;
 
-}));
+})));
 
 //# sourceMappingURL=player.js.map
